@@ -1,3 +1,3 @@
-import {Route} from '../types/types';
+import { Route } from "../types/types";
 
-export type StravaRoute = Route
+export type StravaRoute = Route;

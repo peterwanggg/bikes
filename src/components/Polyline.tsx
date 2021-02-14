@@ -1,15 +1,15 @@
-import {Component} from 'react';
+import { Component } from "react";
 
 type Props = {
-  encodedPath: string,
-  map: any,
-  maps: any,
-  color: string
-}
+  encodedPath: string;
+  map: any;
+  maps: any;
+  color: string;
+};
 
 export default class Polyline extends Component<Props> {
   renderPolylines(): void {
-    const {encodedPath, map, maps, color} = this.props;
+    const { encodedPath, map, maps, color } = this.props;
     const path = encodedPath;
 
     const nonGeodesicPolyline = new maps.Polyline({
