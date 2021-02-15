@@ -13,6 +13,7 @@ export const fetchRoutes: any = async (
   })
     .then((response) => response.json())
     .then((data) => {
+      console.log(data);
       setRoutes(data);
     });
 };

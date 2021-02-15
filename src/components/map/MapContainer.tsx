@@ -15,7 +15,7 @@ interface Props {
 
 const Wrapper = styled.main`
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 64px);
 `;
 
 const fitBounds = (map: any, maps: any, routesResponse: RoutesResponse) => {
