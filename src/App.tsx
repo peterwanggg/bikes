@@ -110,7 +110,7 @@ const App: FunctionComponent = () => {
       </AppBar>
 
       <Drawer
-        className={classes.drawer}
+        // className={classes.drawer}
         variant="persistent"
         anchor="bottom"
         open={open}
