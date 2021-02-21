@@ -1,13 +1,11 @@
 import { BACKEND_BASE_URL } from "../const/api";
-import { ExtProvider, Route } from "../types/types";
+import { Route } from "../types/types";
 
 export interface RoutesResponse {
-  data: { [provider in ExtProvider]: Array<Route> };
+  data: Array<Route>;
 }
 
-export const fetchRoutes: any = async (
-  setRoutes: (routesResponse: RoutesResponse) => void
-) => {
+export const fetchRoutes: any = async (setRoutes: (routesResponse: RoutesResponse) => void) => {
   fetch(`${BACKEND_BASE_URL}/routes`, {
     method: "GET",
   })

@@ -4,6 +4,7 @@ export enum ExtProvider {
 
 export interface Route {
   id: string;
+  provider: ExtProvider;
 
   path: string;
   name: string;

@@ -1,7 +1,6 @@
 import React, { useState, FunctionComponent } from "react";
 import styled from "styled-components";
 import GoogleMapReact from "google-map-react";
-import _ from "lodash";
 
 import LOS_ANGELES_CENTER from "../../const/la_center";
 import * as KEYS from "../../const/keys";
@@ -20,12 +19,10 @@ const Wrapper = styled.main`
 
 const fitBounds = (map: any, maps: any, routesResponse: RoutesResponse) => {
   const bounds = new maps.LatLngBounds();
-  for (const [, routes] of Object.entries(routesResponse.data)) {
-    for (const route of routes) {
-      const path = route.path;
-      for (let n = 0; n < path.length; n++) {
-        bounds.extend(path[n]);
-      }
+  for (const route of routesResponse.data) {
+    const path = route.path;
+    for (let n = 0; n < path.length; n++) {
+      bounds.extend(path[n]);
     }
   }
   map.fitBounds(bounds);
@@ -56,21 +53,17 @@ const MapContainer: FunctionComponent<Props> = (props: Props) => {
       >
         {fetchedRoutes &&
           fitBounds(mapInstance, mapApi, fetchedRoutes) &&
-          _.values(
-            _.mapValues(fetchedRoutes.data, (routes: Array<Route>) => {
-              return _.flatMap(routes, (route: Route) => {
-                return (
-                  <Polyline
-                    key={route.path}
-                    map={mapInstance}
-                    maps={mapApi}
-                    encodedPath={route.path}
-                    color={route.color}
-                  />
-                );
-              });
-            })
-          )}
+          fetchedRoutes.data.map((route: Route) => {
+            return (
+              <Polyline
+                key={route.provider + route.id}
+                map={mapInstance}
+                maps={mapApi}
+                encodedPath={route.path}
+                color={route.color}
+              />
+            );
+          })}
       </GoogleMapReact>
     </Wrapper>
   );

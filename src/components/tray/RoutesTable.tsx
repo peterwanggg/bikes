@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from "react";
 import convert from "convert-units";
-import _ from "lodash";
 
 import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
 
@@ -41,8 +40,7 @@ const columns = (unit: Unit): ColDef[] => [
     field: "isPrivate",
     headerName: "Private",
     width: 150,
-    valueFormatter: (params: ValueFormatterParams) =>
-      params.value ? "Private" : "Public",
+    valueFormatter: (params: ValueFormatterParams) => (params.value ? "Private" : "Public"),
   },
   {
     field: "createdAt",
@@ -56,9 +54,7 @@ const columns = (unit: Unit): ColDef[] => [
 const distanceToDisplayString = (distanceInMeters: number, unit: Unit) => {
   const Fmt = "0.0";
   if (unit === Unit.Imperial) {
-    return (
-      numeral(convert(distanceInMeters).from("m").to("mi")).format(Fmt) + " mi"
-    );
+    return numeral(convert(distanceInMeters).from("m").to("mi")).format(Fmt) + " mi";
   } else {
     return numeral(distanceInMeters / 1000).format(Fmt) + " km";
   }
@@ -67,31 +63,22 @@ const distanceToDisplayString = (distanceInMeters: number, unit: Unit) => {
 const metricElevationUnit = (elevationGainInMeters: number, unit: Unit) => {
   const Fmt = "0,0";
   if (unit === Unit.Imperial) {
-    return (
-      numeral(convert(elevationGainInMeters).from("m").to("ft")).format(Fmt) +
-      " ft"
-    );
+    return numeral(convert(elevationGainInMeters).from("m").to("ft")).format(Fmt) + " ft";
   }
   return numeral(elevationGainInMeters).format("0,0") + " m";
 };
 
 const responseToRows = (routesResponse: RoutesResponse): Array<TableRow> => {
-  return _.flatMap(
-    _.values(
-      _.mapValues(routesResponse.data, (routes: Array<Route>) => {
-        return _.flatMap(routes, (route: Route) => {
-          return {
-            id: route.id,
-            name: route.name,
-            distance: route.distanceInMeters,
-            elevation: route.elevationGainInMeters,
-            createdAt: route.createdAt,
-            isPrivate: route.isPrivate,
-          };
-        });
-      })
-    )
-  );
+  return routesResponse.data.map((route: Route) => {
+    return {
+      id: route.id,
+      name: route.name,
+      distance: route.distanceInMeters,
+      elevation: route.elevationGainInMeters,
+      createdAt: route.createdAt,
+      isPrivate: route.isPrivate,
+    };
+  });
 };
 
 const RoutesTable: FunctionComponent<Props> = (props: Props) => {
@@ -100,12 +87,7 @@ const RoutesTable: FunctionComponent<Props> = (props: Props) => {
 
   return (
     <div style={{ height: 400, width: "100%" }}>
-      <DataGrid
-        rows={rows}
-        columns={columns(unit)}
-        pageSize={5}
-        checkboxSelection
-      />
+      <DataGrid rows={rows} columns={columns(unit)} pageSize={5} checkboxSelection />
     </div>
   );
 };
