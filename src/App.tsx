@@ -1,13 +1,7 @@
 import React, { useState, useEffect, FunctionComponent } from "react";
 
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import {
-  AppBar,
-  CssBaseline,
-  Drawer,
-  IconButton,
-  Toolbar,
-} from "@material-ui/core";
+import { makeStyles } from "@material-ui/core/styles";
+import { AppBar, CssBaseline, Drawer, IconButton, Toolbar } from "@material-ui/core";
 import UnfoldMoreIcon from "@material-ui/icons/UnfoldMore";
 
 import { RoutesResponse, fetchRoutes } from "./api/backend";
@@ -16,7 +10,6 @@ import TrayContainer from "./components/tray/TrayContainer";
 import { KeyboardArrowDown } from "@material-ui/icons";
 
 const drawerHeight = 340;
-
 const useStyles = makeStyles((theme) => ({
   //   root: {
   //     display: "flex",
