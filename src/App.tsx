@@ -4,10 +4,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import { AppBar, CssBaseline, Drawer, IconButton, Toolbar } from "@material-ui/core";
 import UnfoldMoreIcon from "@material-ui/icons/UnfoldMore";
 
-import { RoutesResponse, fetchRoutes } from "./api/backend";
+import { RoutesResponse, retrieveAllRoutes } from "./api/backend";
 import MapContainer from "./components/map/MapContainer";
 import TrayContainer from "./components/tray/TrayContainer";
-import { KeyboardArrowDown } from "@material-ui/icons";
 
 const drawerHeight = 340;
 const useStyles = makeStyles((theme) => ({
@@ -75,16 +74,17 @@ const App: FunctionComponent = () => {
 
   const [fetchedRoutes, setFetchedRoutes] = useState<RoutesResponse>();
 
-  const [open, setOpen] = useState(true);
-  const handleDrawerOpen = () => {
-    setOpen(true);
+  // Tray
+  const [openTray, setOpenTray] = useState(true);
+  const handleTrayOpen = () => {
+    setOpenTray(true);
   };
-  const handleDrawerClose = () => {
-    setOpen(false);
+  const handleTrayClose = () => {
+    setOpenTray(false);
   };
 
   useEffect(() => {
-    fetchRoutes(setFetchedRoutes);
+    retrieveAllRoutes(setFetchedRoutes);
   }, []);
 
   return (
@@ -96,24 +96,14 @@ const App: FunctionComponent = () => {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <div className={classes.grow} />
-          <IconButton edge="end" color="inherit" onClick={handleDrawerOpen}>
+          <IconButton edge="end" color="inherit" onClick={handleTrayOpen}>
             <UnfoldMoreIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
 
-      <Drawer
-        // className={classes.drawer}
-        variant="persistent"
-        anchor="bottom"
-        open={open}
-      >
-        <div className={classes.drawerIcon}>
-          <IconButton onClick={handleDrawerClose}>
-            <KeyboardArrowDown />
-          </IconButton>
-        </div>
-        <TrayContainer fetchedRoutes={fetchedRoutes} />
+      <Drawer variant="persistent" anchor="bottom" open={openTray}>
+        <TrayContainer fetchedRoutes={fetchedRoutes} handleTrayClose={handleTrayClose} />
       </Drawer>
     </React.Fragment>
   );
