@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import TreeView from "@material-ui/lab/TreeView";
 import TreeItem from "@material-ui/lab/TreeItem";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
@@ -8,6 +8,7 @@ import Slide from "@material-ui/core/Slide";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import CreateFolderDialog from "./CreateFolderDialog";
+import { retrieveAllFolders, RetrieveAllFoldersResponse } from "../../../api/backend";
 
 const useStyles = makeStyles({
   root: {
@@ -21,12 +22,37 @@ interface Props {
   openFolderDrawer: boolean;
 }
 
+interface Node {
+  name: string;
+  children: Node[];
+}
+
+// const buildFolderTree = (root: Node, folders: Folder[]): Node => {
+
+//   folders.forEach((folder) => {
+
+//   })
+//   // const root = { name: "root", children: [] };
+
+//   return root;
+// };
+
 const FolderContainer: FunctionComponent<Props> = (props: Props) => {
   const { openFolderDrawer } = props;
   const classes = useStyles();
+
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const handleAddDialogOpen = () => setAddDialogOpen(true);
   const handleAddDialogClose = () => setAddDialogOpen(false);
+
+  // const [retrievedFolders, setRetrievedFolders] = useState<RetrieveAllFoldersResponse>();
+  const [rootFolder, setRootFolder] = useState<Node>();
+
+  useEffect(() => {
+    retrieveAllFolders().then((folders: RetrieveAllFoldersResponse) => {
+      // setRootFolder(buildFolderTree(folders.data));
+    });
+  }, []);
 
   return (
     <Slide direction="right" in={openFolderDrawer} mountOnEnter unmountOnExit>
@@ -57,7 +83,7 @@ const FolderContainer: FunctionComponent<Props> = (props: Props) => {
           startIcon={<AddIcon />}
           onClick={handleAddDialogOpen}
         >
-          Folders
+          New Folder
         </Button>
         <CreateFolderDialog open={addDialogOpen} handleClose={handleAddDialogClose} />
       </div>

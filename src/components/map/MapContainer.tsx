@@ -4,12 +4,12 @@ import GoogleMapReact from "google-map-react";
 
 import LOS_ANGELES_CENTER from "../../const/la_center";
 import * as KEYS from "../../const/keys";
-import { RoutesResponse } from "../../api/backend";
+import { RetrieveAllRoutesResponse } from "../../api/backend";
 import { Route } from "../../types/types";
 import Polyline from "../../components/Polyline";
 
 interface Props {
-  fetchedRoutes: RoutesResponse | undefined;
+  fetchedRoutes: RetrieveAllRoutesResponse | undefined;
 }
 
 const Wrapper = styled.main`
@@ -17,7 +17,7 @@ const Wrapper = styled.main`
   height: calc(100% - 64px);
 `;
 
-const fitBounds = (map: any, maps: any, routesResponse: RoutesResponse) => {
+const fitBounds = (map: any, maps: any, routesResponse: RetrieveAllRoutesResponse) => {
   const bounds = new maps.LatLngBounds();
   for (const route of routesResponse.data) {
     const path = route.path;

@@ -3,7 +3,7 @@ import React, { useState, FunctionComponent } from "react";
 import { Button, IconButton } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { RoutesResponse } from "../../api/backend";
+import { RetrieveAllRoutesResponse } from "../../api/backend";
 import RoutesTable from "./RoutesTable";
 import FolderContainer from "./folder/FolderContainer";
 import { Unit } from "../../types/types";
@@ -15,7 +15,7 @@ import Box from "@material-ui/core/Box";
 import { amber } from "@material-ui/core/colors";
 
 interface Props {
-  fetchedRoutes: RoutesResponse | undefined;
+  fetchedRoutes: RetrieveAllRoutesResponse | undefined;
   handleTrayClose: () => void;
 }
 

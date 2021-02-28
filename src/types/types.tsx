@@ -17,6 +17,11 @@ export interface Route {
   color: string;
 }
 
+export interface Folder {
+  name: string;
+  parentFolderId: bigint;
+}
+
 export enum Unit {
   Imperial = "imperial",
   Metric = "metric",

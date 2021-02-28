@@ -3,12 +3,12 @@ import convert from "convert-units";
 
 import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
 
-import { RoutesResponse } from "../../api/backend";
+import { RetrieveAllRoutesResponse } from "../../api/backend";
 import { Route, Unit } from "../../types/types";
 import numeral from "numeral";
 
 interface Props {
-  fetchedRoutes: RoutesResponse;
+  fetchedRoutes: RetrieveAllRoutesResponse;
   unit: Unit;
 }
 interface TableRow {
@@ -68,7 +68,7 @@ const metricElevationUnit = (elevationGainInMeters: number, unit: Unit) => {
   return numeral(elevationGainInMeters).format("0,0") + " m";
 };
 
-const responseToRows = (routesResponse: RoutesResponse): Array<TableRow> => {
+const responseToRows = (routesResponse: RetrieveAllRoutesResponse): Array<TableRow> => {
   return routesResponse.data.map((route: Route) => {
     return {
       id: route.id,
