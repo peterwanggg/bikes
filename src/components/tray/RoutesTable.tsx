@@ -1,11 +1,13 @@
 import React, { FunctionComponent } from "react";
 import convert from "convert-units";
 
-import { ColDef, DataGrid, ValueFormatterParams } from "@material-ui/data-grid";
+import { AddIcon } from "@material-ui/data-grid";
 
 import { RetrieveAllRoutesResponse } from "../../api/backend";
 import { Route, Unit } from "../../types/types";
 import numeral from "numeral";
+import Button from "@material-ui/core/Button";
+import MUIDataTable, { MUIDataTableColumnDef } from "mui-datatables";
 
 interface Props {
   fetchedRoutes: RetrieveAllRoutesResponse;
@@ -20,34 +22,55 @@ interface TableRow {
   isPrivate: boolean;
 }
 
-const columns = (unit: Unit): ColDef[] => [
-  { field: "name", headerName: "Name", flex: 1 },
+const columns = (unit: Unit): MUIDataTableColumnDef[] => [
   {
-    field: "distance",
-    headerName: "Distance",
-    width: 150,
-    valueFormatter: (params: ValueFormatterParams) =>
-      distanceToDisplayString(params.value as number, unit),
+    name: "name",
+    label: "Name",
+    // flex: 1
   },
   {
-    field: "elevation",
-    headerName: "Elevation",
-    width: 150,
-    valueFormatter: (params: ValueFormatterParams) =>
-      metricElevationUnit(params.value as number, unit),
+    name: "distance",
+    label: "Distance",
+    options: {
+      setCellProps: () => ({ style: { minWidth: "150px", maxWidth: "150px" } }),
+      customBodyRender: (value) => distanceToDisplayString(value as number, unit),
+    },
+    //   width: 150,
+    //   valueFormatter: (params: ValueFormatterParams) =>
+    //     distanceToDisplayString(params.value as number, unit),
   },
   {
-    field: "isPrivate",
-    headerName: "Private",
-    width: 150,
-    valueFormatter: (params: ValueFormatterParams) => (params.value ? "Private" : "Public"),
+    name: "elevation",
+    label: "Elevation",
+    // width: 150,
+    options: {
+      setCellProps: () => ({ style: { minWidth: "150px", maxWidth: "150px" } }),
+      customBodyRender: (value) => metricElevationUnit(value as number, unit),
+    },
+    //   valueFormatter: (params: ValueFormatterParams) =>
+    //     metricElevationUnit(params.value as number, unit),
   },
   {
-    field: "createdAt",
-    headerName: "Created On",
-    width: 150,
-    valueFormatter: (params: ValueFormatterParams) =>
-      new Date(params.value as number).toLocaleDateString(),
+    name: "isPrivate",
+    label: "Private",
+    options: {
+      setCellProps: () => ({ style: { minWidth: "150px", maxWidth: "150px" } }),
+      customBodyRender: (value) => (value ? "Private" : "Public"),
+    },
+    // width: 150,
+    // valueFormatter: (params: ValueFormatterParams) =>
+    //   params.value ? "Private" : "Public",
+  },
+  {
+    name: "createdAt",
+    label: "Created On",
+    options: {
+      setCellProps: () => ({ style: { minWidth: "150px", maxWidth: "150px" } }),
+      customBodyRender: (value) => new Date(value as number).toLocaleDateString(),
+    },
+    // width: 150,
+    // valueFormatter: (params: ValueFormatterParams) =>
+    //   new Date(params.value as number).toLocaleDateString(),
   },
 ];
 
@@ -84,10 +107,22 @@ const responseToRows = (routesResponse: RetrieveAllRoutesResponse): Array<TableR
 const RoutesTable: FunctionComponent<Props> = (props: Props) => {
   const { fetchedRoutes, unit } = props;
   const rows = responseToRows(fetchedRoutes);
+  const addRouteButton = (
+    <Button variant="contained" color="primary" startIcon={<AddIcon />}>
+      Add to folder
+    </Button>
+  );
 
   return (
     <div style={{ height: 400, width: "100%" }}>
-      <DataGrid rows={rows} columns={columns(unit)} pageSize={5} checkboxSelection />
+      <MUIDataTable
+        data={rows}
+        title={""}
+        columns={columns(unit)}
+        options={{ rowsPerPage: 5 }}
+        // checkboxSelection
+        // components={{ Footer: addRouteButton }}
+      />
     </div>
   );
 };
