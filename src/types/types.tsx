@@ -18,8 +18,11 @@ export interface Route {
 }
 
 export interface Folder {
+  id: bigint;
   name: string;
-  parentFolderId: bigint;
+  folderDepth: number;
+  routes: Route[];
+  childPaths: { childFolderId: bigint }[];
 }
 
 export enum Unit {

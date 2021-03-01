@@ -1,3 +1,4 @@
+import _ from "lodash";
 import { LOG_RESPONSES, BACKEND_BASE_URL } from "../const/api";
 import { Folder, Route } from "../types/types";
 
@@ -8,6 +9,11 @@ export interface RetrieveAllRoutesResponse {
 export interface CreateFolderRequest {
   name: string;
   parentFolderId?: bigint;
+}
+
+export enum FolderIncludes {
+  routes = "routes",
+  childPaths = "childPaths",
 }
 
 export interface RetrieveAllFoldersResponse {
@@ -42,8 +48,12 @@ export const createFolder = async (createParams: CreateFolderRequest): Promise<F
       return data;
     });
 
-export const retrieveAllFolders = async (): Promise<RetrieveAllFoldersResponse> =>
-  fetch(`${BACKEND_BASE_URL}/folders`, {
+export const retrieveAllFolders = async (
+  includes?: FolderIncludes[]
+): Promise<RetrieveAllFoldersResponse> => {
+  const params = !_.isEmpty(includes) ? `?include[]=${includes?.join("&include[]=")}` : "";
+
+  return fetch(`${BACKEND_BASE_URL}/folders${params}`, {
     method: "GET",
   })
     .then((response) => response.json())
@@ -51,6 +61,7 @@ export const retrieveAllFolders = async (): Promise<RetrieveAllFoldersResponse> 
       logResponse(data, "retrieveAllFolders");
       return data;
     });
+};
 
 const logResponse = (data: any, method: string) => {
   if (LOG_RESPONSES) {

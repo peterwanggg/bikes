@@ -8,7 +8,13 @@ import Slide from "@material-ui/core/Slide";
 import Button from "@material-ui/core/Button";
 import AddIcon from "@material-ui/icons/Add";
 import CreateFolderDialog from "./CreateFolderDialog";
-import { retrieveAllFolders, RetrieveAllFoldersResponse } from "../../../api/backend";
+import {
+  FolderIncludes,
+  retrieveAllFolders,
+  RetrieveAllFoldersResponse,
+} from "../../../api/backend";
+import _ from "lodash";
+import { Folder } from "../../../types/types";
 
 const useStyles = makeStyles({
   root: {
@@ -23,36 +29,76 @@ interface Props {
 }
 
 interface Node {
+  id: string;
   name: string;
-  children: Node[];
+  children: { [id: string]: Node };
 }
 
-// const buildFolderTree = (root: Node, folders: Folder[]): Node => {
+const buildRootNodes = (folders: Folder[]): Node[] => {
+  const folderNodeMap = _.fromPairs(
+    _.map(folders, (folder) => {
+      return [
+        folder.id.toString(),
+        {
+          folder: folder,
+          node: { id: folder.id.toString(), name: folder.name, children: {} } as Node,
+        },
+      ];
+    })
+  );
 
-//   folders.forEach((folder) => {
+  return _.map(folderNodeMap, (value) => {
+    const { folder, node } = value;
 
-//   })
-//   // const root = { name: "root", children: [] };
+    // build child connections
+    folder.childPaths.forEach((childPath) => {
+      const childId = childPath.childFolderId.toString();
+      const childNode = folderNodeMap[childId].node;
+      node.children[childId] = childNode;
+    });
 
-//   return root;
-// };
+    // Only return top level
+    if (folder.folderDepth === 0) {
+      return node;
+    }
+    return null;
+  }).filter((node) => node !== null) as Node[];
+};
+
+const renderTree = (nodes: Node) => (
+  <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
+    {!_.isEmpty(nodes.children)
+      ? _.map(nodes.children, (node) => renderTree(node))
+      : null}
+  </TreeItem>
+);
 
 const FolderContainer: FunctionComponent<Props> = (props: Props) => {
   const { openFolderDrawer } = props;
   const classes = useStyles();
 
+  const [rootNodes, setRootNodes] = useState<Node[]>([]);
+
+  const refreshRootNodes = async () =>
+    retrieveAllFolders([FolderIncludes.childPaths]).then(
+      (resp: RetrieveAllFoldersResponse) => {
+        const rootNodes = buildRootNodes(resp.data);
+        setRootNodes(rootNodes);
+      }
+    );
+
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const handleAddDialogOpen = () => setAddDialogOpen(true);
-  const handleAddDialogClose = () => setAddDialogOpen(false);
-
-  // const [retrievedFolders, setRetrievedFolders] = useState<RetrieveAllFoldersResponse>();
-  const [rootFolder, setRootFolder] = useState<Node>();
+  const handleAddDialogClose = async () => {
+    await refreshRootNodes();
+    setAddDialogOpen(false);
+  };
 
   useEffect(() => {
-    retrieveAllFolders().then((folders: RetrieveAllFoldersResponse) => {
-      // setRootFolder(buildFolderTree(folders.data));
-    });
+    refreshRootNodes();
   }, []);
+
+  const topNodes = rootNodes.map((rootNode) => renderTree(rootNode));
 
   return (
     <Slide direction="right" in={openFolderDrawer} mountOnEnter unmountOnExit>
@@ -62,21 +108,9 @@ const FolderContainer: FunctionComponent<Props> = (props: Props) => {
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
         >
-          <TreeItem nodeId="1" label="Applications">
-            <TreeItem nodeId="2" label="Calendar" />
-            <TreeItem nodeId="3" label="Chrome" />
-            <TreeItem nodeId="4" label="Webstorm" />
-          </TreeItem>
-          <TreeItem nodeId="5" label="Documents">
-            <TreeItem nodeId="10" label="OSS" />
-            <TreeItem nodeId="6" label="Material-UI">
-              <TreeItem nodeId="7" label="src">
-                <TreeItem nodeId="8" label="index.js" />
-                <TreeItem nodeId="9" label="tree-view.js" />
-              </TreeItem>
-            </TreeItem>
-          </TreeItem>
+          {topNodes}
         </TreeView>
+
         <Button
           variant="contained"
           color="primary"

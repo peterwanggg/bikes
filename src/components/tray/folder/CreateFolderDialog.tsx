@@ -15,6 +15,7 @@ interface Props {
 const CreateFolderDialog: FunctionComponent<Props> = (props: Props) => {
   const { open, handleClose } = props;
   const [folderName, setFolderName] = useState("");
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const handleFolderNameChange = (nameEvent: {
     currentTarget: { value: React.SetStateAction<string> };
@@ -23,10 +24,13 @@ const CreateFolderDialog: FunctionComponent<Props> = (props: Props) => {
   };
 
   const handleCreateFolder = () => {
+    setButtonDisabled(true);
     const createFolderRequest = {
       name: folderName,
     };
-    createFolder(createFolderRequest).then(() => handleClose());
+    createFolder(createFolderRequest)
+      .then(() => handleClose())
+      .then(() => setButtonDisabled(false));
   };
 
   return (
@@ -50,14 +54,12 @@ const CreateFolderDialog: FunctionComponent<Props> = (props: Props) => {
         <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={handleCreateFolder} color="primary">
+        <Button disabled={buttonDisabled} onClick={handleCreateFolder} color="primary">
           Create Folder
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
-
-// const createFolder =
 
 export default CreateFolderDialog;
